@@ -61,7 +61,7 @@ class DeviceControlInterface:
     def wifi(self) -> List[DeviceWifi]:
         raise NotImplementedError
 
-    def wifi_connect(self, ssid: str, password: str, ifname: str = None) -> None:
+    def wifi_connect(self, ssid: str, password: str = None, ifname: str = None) -> None:
         raise NotImplementedError
 
     def wifi_hotspot(self,
@@ -141,8 +141,10 @@ class DeviceControl(DeviceControlInterface):
                 results.append(DeviceWifi.parse(row))
         return results
 
-    def wifi_connect(self, ssid: str, password: str, ifname: str = None) -> None:
-        cmd = ['device', 'wifi', 'connect', ssid, 'password', password]
+    def wifi_connect(self, ssid: str, password: str = None, ifname: str = None) -> None:
+        cmd = ['device', 'wifi', 'connect', ssid]
+        if password is not None:
+            cmd += ['password', password]
         if ifname is not None:
             cmd += ['ifname', ifname]
         self._syscmd.nmcli(cmd)
